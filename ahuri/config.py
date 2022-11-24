@@ -8,7 +8,7 @@ _config = os.path.join(home, ".config")
 config_dir = os.path.join(_config, "ahuri-cli")
 config = os.path.join(config_dir, "config.json")
 reset_str = """{
-    "api_url": "http://18.169.99.65",
+    "api_url": "http://18.169.99.65:81",
     "time_format": "%H:%M",
     "user": {
         "token": null
