@@ -1,0 +1,5 @@
+**/__pycache__/
+.venv/
+ahuri_cli.egg-info/
+dist/
+src/ahuri.py

@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ahuri-cli"
+version = "1.0.0"
+authors = [
+    { name="sqdnoises" }
+]
+description = "Use Ahuri from the command line!"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent"
+]
+dependencies = [
+    "requests",
+    "websockets",
+    "yarl"
+]
+
+[project.urls]
+Homepage = "https://github.com/ahuri-app/ahuri-cli"
+
+[project.scripts]
+ahuri = "ahuri.start:main"
