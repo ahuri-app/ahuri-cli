@@ -22,10 +22,11 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
+import os
+import sys
 import json
 import asyncio
 import argparse
-import readline
 import requests
 import websockets
 from . import (
@@ -36,6 +37,16 @@ from . import (
 from .utils import *
 from yarl import URL
 from datetime import datetime
+if os.name == "nt":
+    try:
+        from pyreadline3 import Readline
+    except ModuleNotFoundError:
+        print("Please install Ahuri CLI's Windows dependencies by running:\npip install ahuri-cli[windows]")
+        sys.exit()
+    else:
+        readline = Readline()
+else:
+    import readline
 
 config.check()
 
@@ -221,7 +232,7 @@ async def listen(
                     else:
                         winfo(f"Invalid websocket response returned. Websocket response:\n{json.dumps(wsr, indent=2)}")
                     winfo("Exiting")
-                    exit()
+                    sys.exit()
 
                 message = wsr["payload"]
                 sender = message["sender"]
@@ -253,20 +264,20 @@ def account_deletefunc(args: argparse.Namespace) -> None:
         pass
     elif sure_inp == "no" or sure_inp == "n":
         print("Operation Cancelled.")
-        exit()
+        sys.exit()
     else:
         print("Invalid input, cancelled.")
-        exit()
+        sys.exit()
 
     sure_inp2 = input("Double-Confirm: Are you sure you want to delete your account? (This action is irreversible!): ").strip().lower()
     if sure_inp2 == "yes" or sure_inp2 == "y":
         pass
     elif sure_inp2 == "no" or sure_inp2 == "n":
         print("Operation Cancelled.")
-        exit()
+        sys.exit()
     else:
         print("Invalid input, cancelled.")
-        exit()
+        sys.exit()
 
     api_url = config.get("api_url", verbose=args.verbose)
     if api_url == None:
@@ -657,10 +668,10 @@ def channel_deletefunc(args: argparse.Namespace) -> None:
         pass
     elif sure_inp == "no" or sure_inp == "n":
         print("Operation Cancelled.")
-        exit()
+        sys.exit()
     else:
         print("Invalid input, cancelled.")
-        exit()
+        sys.exit()
 
     id = args.id.strip()
 

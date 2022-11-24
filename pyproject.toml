@@ -1,10 +1,13 @@
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = [
+    "setuptools",
+    "wheel"
+]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "ahuri-cli"
-version = "1.0.1"
+version = "1.1.0"
 authors = [
     { name="sqdnoises" }
 ]
@@ -28,3 +31,8 @@ Homepage = "https://github.com/ahuri-app/ahuri-cli"
 
 [project.scripts]
 ahuri = "ahuri.start:main"
+
+[project.optional-dependencies]
+windows = [
+    "pyreadline3"
+]

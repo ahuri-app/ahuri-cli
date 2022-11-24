@@ -11,8 +11,6 @@ This repository contains the source code for `ahuri-cli`.
 <br>
 View the [PyPI repository](https://pypi.org/project/ahuri-cli) for this CLI app.
 
-**NOTE:** THIS APP CURRENTLY DOES **NOT** WORK ON SYSTEMS RUNNING WINDOWS.
-
 ---
 
 # How to use this app?
@@ -20,9 +18,16 @@ View the [PyPI repository](https://pypi.org/project/ahuri-cli) for this CLI app.
 You need [Python 3.8+](https://python.org) with pip on path.
 
 ## Installation
+### On Linux / MacOS
 Open a terminal and type:
 ```py
 $ pip install ahuri-cli
+```
+
+### On Windows
+Open a terminal and type:
+```py
+$ pip install ahuri-cli[windows]
 ```
 
 ## Usage

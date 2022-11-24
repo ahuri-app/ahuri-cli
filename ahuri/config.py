@@ -3,7 +3,7 @@ import json
 from .utils import *
 
 # Assigning Variables
-home = os.getenv("HOME")
+home = os.getenv("LOCALAPPDATA") if os.name == "nt" else os.getenv("HOME")
 _config = os.path.join(home, ".config")
 config_dir = os.path.join(_config, "ahuri-cli")
 config = os.path.join(config_dir, "config.json")
