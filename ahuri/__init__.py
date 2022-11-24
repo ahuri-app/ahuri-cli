@@ -10,5 +10,3 @@ __license__ = "MIT"
 __copyright__ = "Copyright 2022-present SqdNoises"
 __version__ = "1.0.0"
 __display_version__ = "ahuri-cli " + __version__
-
-from .start import main
