@@ -8,12 +8,12 @@ _config = os.path.join(home, ".config")
 config_dir = os.path.join(_config, "ahuri-cli")
 config = os.path.join(config_dir, "config.json")
 reset_str = """{
-    "api_url": "https://localhost",
+    "api_url": "http://18.169.99.65",
     "time_format": "%H:%M",
     "user": {
         "token": null
     },
-    "ws_url": "ws://localhost/ws"
+    "ws_url": "ws://18.169.99.65:81/ws"
 }"""
 
 def reset(p=True, verbose=False) -> None:
