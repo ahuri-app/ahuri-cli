@@ -27,5 +27,5 @@ $ pip install ahuri-cli
 
 ## Usage
 You can use the command `ahuri` to use the app.
-
+<br>
 Use `ahuri -h` to view the main help page.
