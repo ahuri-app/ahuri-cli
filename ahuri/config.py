@@ -3,8 +3,11 @@ import json
 from .utils import *
 
 # Assigning Variables
-home = os.getenv("LOCALAPPDATA") if os.name == "nt" else os.getenv("HOME")
-_config = os.path.join(home, ".config")
+if os.name == "nt":
+    _config = os.getenv("LOCALAPPDATA")
+else:
+    home = os.getenv("HOME")
+    _config = os.path.join(home, ".config")
 config_dir = os.path.join(_config, "ahuri-cli")
 config = os.path.join(config_dir, "config.json")
 reset_str = """{
@@ -39,7 +42,26 @@ def check() -> None:
     Function to check the config directories and config file when the program starts.
     """
     try:
-        if os.path.exists(home):
+        if os.name == "nt":
+            if os.path.exists(config_dir):
+                if os.path.exists(config):
+                    with open(config, "r") as configfile:
+                        try:
+                            if type(json.load(configfile)) != dict:
+                                raise TypeError
+                        except:
+                            print("Config file seems to be broken... Resetting config.")
+                            broken = True
+                        else:
+                            broken = False
+                    if broken:
+                        reset(p=False)
+                else:
+                    reset(p=False)
+            else:
+                os.mkdir(config_dir)
+                reset(p=False)
+        else:
             if os.path.exists(_config):
                 if os.path.exists(config_dir):
                     if os.path.exists(config):
@@ -53,7 +75,7 @@ def check() -> None:
                             else:
                                 broken = False
                         if broken:
-                            reset(p=False)
+                            reset()
                     else:
                         reset(p=False)
                 else:
@@ -63,11 +85,6 @@ def check() -> None:
                 os.mkdir(_config)
                 os.mkdir(config_dir)
                 reset(p=False)
-        else:
-            os.mkdir(home)
-            os.mkdir(_config)
-            os.mkdir(config_dir)
-            reset(p=False)
     except:
         pass
 
