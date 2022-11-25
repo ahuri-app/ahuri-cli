@@ -1,6 +1,6 @@
 <img src="https://cdn.discordapp.com/attachments/1017855060190965830/1024727848835096596/ahuri_card.png">
 
-# ahuri-cli v1.0.1
+# ahuri-cli v1.1.2
 ![Python language](https://img.shields.io/badge/language-Python_3-blue)
 ![PyPI](https://img.shields.io/badge/PyPI.org-ahuri--cli-orange)
 ![MIT license](https://img.shields.io/badge/license-MIT-brightgreen)
