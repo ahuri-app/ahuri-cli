@@ -27,6 +27,7 @@ import sys
 import json
 import asyncio
 import argparse
+import maskpass
 import requests
 import websockets
 from . import (
@@ -422,7 +423,10 @@ def account_loginfunc(args: argparse.Namespace) -> None:
         args (argparse.Namespace)
     """
     email = args.email.strip()
-    password = input(f"Enter password for {email}: ").strip()
+    password = maskpass.askpass(
+        prompt = f"Enter password for {email}: ",
+        mask = "*"
+    ).strip()
     
     api_url = config.get("api_url", verbose=args.verbose)
     if api_url == None:
