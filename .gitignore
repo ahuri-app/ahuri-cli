@@ -2,3 +2,4 @@
 .venv/
 ahuri_cli.egg-info/
 dist/
+pages/
