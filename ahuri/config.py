@@ -2,6 +2,17 @@ import os
 import json
 from .utils import *
 
+__all__ = [
+    "_config",
+    "config_dir",
+    "config",
+    "reset_str",
+    "reset",
+    "check",
+    "get",
+    "set"
+]
+
 # Assigning Variables
 if os.name == "nt":
     _config = os.getenv("LOCALAPPDATA")
@@ -33,7 +44,7 @@ def reset(p=True, verbose=False) -> None:
         configfile.write(reset_str)
     
     if p:
-        print("Reset config file!")
+        info("Reset config file!")
     elif verbose:
         log("Reset config file!")
 
@@ -50,12 +61,12 @@ def check() -> None:
                             if type(json.load(configfile)) != dict:
                                 raise TypeError
                         except:
-                            print("Config file seems to be broken... Resetting config.")
+                            winfo("Config file seems to be broken... Resetting config.")
                             broken = True
                         else:
                             broken = False
                     if broken:
-                        reset(p=False)
+                        reset()
                 else:
                     reset(p=False)
             else:
@@ -70,7 +81,7 @@ def check() -> None:
                                 if type(json.load(configfile)) != dict:
                                     raise TypeError
                             except:
-                                print("Config file seems to be broken... Resetting config.")
+                                winfo("Config file seems to be broken... Resetting config.")
                                 broken = True
                             else:
                                 broken = False

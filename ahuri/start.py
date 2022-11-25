@@ -41,7 +41,8 @@ if os.name == "nt":
     try:
         from pyreadline3 import Readline
     except ModuleNotFoundError:
-        print("Please install Ahuri CLI's Windows dependencies by running:\npip install ahuri-cli[windows]")
+        winfo("Please install Ahuri CLI's Windows dependencies by running:")
+        print("pip install ahuri-cli[windows]")
         sys.exit()
     else:
         readline = Readline()
@@ -148,7 +149,7 @@ async def listen(
     if verbose:
         log(f"Sending GET request to API\nAPI URL: {api_url}")
     
-    info(f"Getting channel from ID '{id}'")
+    info(f"Getting channel from ID '{id}'...")
 
     response = requests.get(
         api_url/"channel"/id,
@@ -181,15 +182,17 @@ async def listen(
         else:
             channel_connect.error(f"Invalid response text received from {response.url}.")
     else:
+        winfo("An error occured! Request did not return status code 200.")
         if has_message:
-            print(f"An error occured! Request did not return status code 200.\nStatus code: {response.status_code}")
+            print(f"Status code: {response.status_code}")
             channel_connect.error(f"{response.status_code}: {rjson['message']}")
         else:
-            print(f"An error occured! Request did not return status code 200.\nStatus code: {response.status_code}\nResponse text: {response.text}")
+            print(f"Status code: {response.status_code}\nResponse text: {response.text}")
             channel_connect.error(f"Status code {response.status_code} returned.")    
+    
     if verbose:
         log(f"Establishing connection to websocket server at {ws_url}")
-    info(f"Connecting to channel '{channel['name']}'")
+    info(f"Connecting to channel '{channel['name']}'...")
     try:
         async with websockets.connect(ws_url) as ws:
             if verbose:
@@ -231,19 +234,19 @@ async def listen(
                         winfo(f"Invalid websocket response returned. Message: {wsr['message']}")
                     else:
                         winfo(f"Invalid websocket response returned. Websocket response:\n{json.dumps(wsr, indent=2)}")
-                    winfo("Exiting")
+                    winfo("Exiting.")
                     sys.exit()
 
                 message = wsr["payload"]
                 sender = message["sender"]
-                if last_message == sender["id"]:
+                if last_message == sender["id"] and not verbose:
                     print(f"{time} > {message['content']}")
                 else:
                     print()
                     print(f"{message['sender']['username']}.{message['sender']['tag']} at {time}\n> {message['content']}")
                 last_message = sender["id"]
     except KeyboardInterrupt:
-        winfo("Keyboard Interrupt sent. Exiting")
+        winfo("Keyboard Interrupt sent. Exiting.")
 
 # Add functions that run after subcommands are used
 def mainfunc(args: argparse.Namespace) -> None:
@@ -263,20 +266,20 @@ def account_deletefunc(args: argparse.Namespace) -> None:
     if sure_inp == "yes" or sure_inp == "y":
         pass
     elif sure_inp == "no" or sure_inp == "n":
-        print("Operation Cancelled.")
+        info("Operation Cancelled.")
         sys.exit()
     else:
-        print("Invalid input, cancelled.")
+        winfo("Invalid input, cancelled.")
         sys.exit()
 
     sure_inp2 = input("Double-Confirm: Are you sure you want to delete your account? (This action is irreversible!): ").strip().lower()
     if sure_inp2 == "yes" or sure_inp2 == "y":
         pass
     elif sure_inp2 == "no" or sure_inp2 == "n":
-        print("Operation Cancelled.")
+        info("Operation Cancelled.")
         sys.exit()
     else:
-        print("Invalid input, cancelled.")
+        winfo("Invalid input, cancelled.")
         sys.exit()
 
     api_url = config.get("api_url", verbose=args.verbose)
@@ -334,11 +337,12 @@ def account_deletefunc(args: argparse.Namespace) -> None:
         else:
             account_delete.error(f"Invalid response text received from {response.url} while fetching user details.")
     else:
+        winfo("An error occured! Request did not return status code 200.")
         if has_message:
-            print(f"An error occured! Request did not return status code 200.\nStatus code: {response.status_code}")
+            print(f"Status code: {response.status_code}")
             account_delete.error(f"{response.status_code}: {rjson['message']}")
         else:
-            print(f"An error occured! Request did not return status code 200.\nStatus code: {response.status_code}\nResponse text: {response.text}")
+            print(f"Status code: {response.status_code}\nResponse text: {response.text}")
             account_delete.error(f"Status code {response.status_code} returned.")
 
 def account_infofunc(args: argparse.Namespace) -> None:
@@ -402,11 +406,12 @@ def account_infofunc(args: argparse.Namespace) -> None:
         else:
             account_info.error(f"Invalid response text received from {response.url} while fetching user details.")
     else:
+        winfo("An error occured! Request did not return status code 200.")
         if has_message:
-            print(f"An error occured! Request did not return status code 200.\nStatus code: {response.status_code}")
+            print(f"Status code: {response.status_code}")
             account_info.error(f"{response.status_code}: {rjson['message']}")
         else:
-            print(f"An error occured! Request did not return status code 200.\nStatus code: {response.status_code}\nResponse text: {response.text}")
+            print(f"Status code: {response.status_code}\nResponse text: {response.text}")
             account_info.error(f"Status code {response.status_code} returned.")
 
 def account_loginfunc(args: argparse.Namespace) -> None:
@@ -432,6 +437,7 @@ def account_loginfunc(args: argparse.Namespace) -> None:
 
     if args.verbose:
         log(f"Sending POST request to API\nAPI URL: {api_url}\nJSON Data: {json.dumps(data, indent=2)}")
+    info("Logging in...")
     response = requests.post(
         api_url/"auth"/"login",
         json = data
@@ -460,15 +466,16 @@ def account_loginfunc(args: argparse.Namespace) -> None:
         if is_json:
             user_details = rjson["payload"]
             config.set("user", user_details, verbose=args.verbose)
-            print(f"Logged in as {user_details['username']}.{user_details['tag']} successfully!")
+            info(f"Logged in as {user_details['username']}.{user_details['tag']} successfully!")
         else:
             account_login.error(f"Invalid response text received from {response.url}.")
     else:
+        winfo("An error occured! Request did not return status code 200.")
         if has_message:
-            print(f"An error occured! Request did not return status code 200.\nStatus code: {response.status_code}")
+            print(f"Status code: {response.status_code}")
             account_login.error(f"{response.status_code}: {rjson['message']}")
         else:
-            print(f"An error occured! Request did not return status code 200.\nStatus code: {response.status_code}\nResponse text: {response.text}")
+            print(f"Status code: {response.status_code}\nResponse text: {response.text}")
             account_login.error(f"Status code {response.status_code} returned.")
 
 def account_registerfunc(args: argparse.Namespace) -> None:
@@ -498,6 +505,7 @@ def account_registerfunc(args: argparse.Namespace) -> None:
 
         if args.verbose:
             log(f"Sending POST request to API\nAPI URL: {api_url}\nJSON Data: {json.dumps(data, indent=2)}")
+        info("Registering account...")
         response = requests.post(
             api_url/"auth"/"register",
             json = data
@@ -527,15 +535,17 @@ def account_registerfunc(args: argparse.Namespace) -> None:
             if is_json:
                 user_details = rjson["payload"]
                 config.set("user", user_details, verbose=args.verbose)
-                print(f"\nRegistered an account successfully!\nAccount Details\nEmail: {email}\nUsername: {user_details['username']}.{user_details['tag']}")
+                info("Registered an account successfully!")
+                print(f"\nAccount Details\nEmail: {email}\nUsername: {user_details['username']}.{user_details['tag']}")
             else:
                 account_register.error(f"Invalid response text received from {response.url}.")
         else:
+            winfo("An error occured! Request did not return status code 201.")
             if has_message:
-                print(f"An error occured! Request did not return status code 201.\nStatus code: {response.status_code}")
+                print(f"Status code: {response.status_code}")
                 account_register.error(f"{response.status_code}: {rjson['message']}")
             else:
-                print(f"An error occured! Request did not return status code 201.\nStatus code: {response.status_code}\nResponse text: {response.text}")
+                print(f"Status code: {response.status_code}\nResponse text: {response.text}")
                 account_register.error(f"Status code {response.status_code} returned.")
     else:
         account_register.error("Passwords do not match.")
@@ -616,6 +626,7 @@ def channel_createfunc(args: argparse.Namespace) -> None:
 
     if args.verbose:
         log(f"Sending POST request to API\nAPI URL: {api_url}\nJSON Data: {json.dumps(data, indent=2)}")
+    info("Creating channel...")
     response = requests.post(
         api_url/"channel",
         json = data,
@@ -645,15 +656,17 @@ def channel_createfunc(args: argparse.Namespace) -> None:
     if response.status_code == 201:
         if is_json:
             channel = rjson["payload"]
-            print(f"Created channel successfully!\n\nChannel Details\nName: {channel['name']}\nID: {channel['id']}")
+            info("Created channel successfully!")
+            print(f"\nChannel Details\nName: {channel['name']}\nID: {channel['id']}")
         else:
             channel_create.error(f"Invalid response text received from {response.url}.")
     else:
+        winfo("An error occured! Request did not return status code 201.")
         if has_message:
-            print(f"An error occured! Request did not return status code 201.\nStatus code: {response.status_code}")
+            print(f"Status code: {response.status_code}")
             channel_create.error(f"{response.status_code}: {rjson['message']}")
         else:
-            print(f"An error occured! Request did not return status code 201.\nStatus code: {response.status_code}\nResponse text: {response.text}")
+            print(f"Status code: {response.status_code}\nResponse text: {response.text}")
             channel_create.error(f"Status code {response.status_code} returned.")
 
 def channel_deletefunc(args: argparse.Namespace) -> None:
@@ -697,6 +710,7 @@ def channel_deletefunc(args: argparse.Namespace) -> None:
 
     if args.verbose:
         log(f"Sending DELETE request to API\nAPI URL: {api_url}")
+    info("Deleting channel...")
     response = requests.delete(
         api_url/"channel"/id,
         headers = headers
@@ -723,9 +737,10 @@ def channel_deletefunc(args: argparse.Namespace) -> None:
             log(f"Response Text:\n{response.text}")
 
     if response.status_code == 200:
+        info("Deleted channel successfully!")
         if is_json:
             channel = rjson["payload"]
-            print(f"Deleted channel cuccessfully!\n\nChannel Details\nName: {channel['name']}\nID: {channel['id']}\nCreated at: {channel['createdAt']} UTC\nOwner: {channel['owner']['username']}.{channel['owner']['tag']} ({channel['owner']['id']})")
+            print(f"\nChannel Details\nName: {channel['name']}\nID: {channel['id']}\nCreated at: {channel['createdAt']} UTC\nOwner: {channel['owner']['username']}.{channel['owner']['tag']} ({channel['owner']['id']})")
         else:
             channel_delete.error(f"Invalid response text received from {response.url}.")
     else:
@@ -767,6 +782,7 @@ def channel_infofunc(args: argparse.Namespace) -> None:
 
     if args.verbose:
         log(f"Sending GET request to API\nAPI URL: {api_url}")
+    info("Getting channel details...")
     response = requests.get(
         api_url/"channel"/id,
         headers = headers
@@ -795,15 +811,16 @@ def channel_infofunc(args: argparse.Namespace) -> None:
     if response.status_code == 200:
         if is_json:
             channel = rjson["payload"]
-            print(f"Channel Details\nName: {channel['name']}\nID: {channel['id']}\nCreated at: {channel['createdAt']} UTC\nOwner: {channel['owner']['username']}.{channel['owner']['tag']} ({channel['owner']['id']})")
+            print(f"\nChannel Details\nName: {channel['name']}\nID: {channel['id']}\nCreated at: {channel['createdAt']} UTC\nOwner: {channel['owner']['username']}.{channel['owner']['tag']} ({channel['owner']['id']})")
         else:
             channel_info.error(f"Invalid response text received from {response.url}.")
     else:
+        winfo("An error occured! Request did not return status code 200.")
         if has_message:
-            print(f"An error occured! Request did not return status code 200.\nStatus code: {response.status_code}")
+            print(f"Status code: {response.status_code}")
             channel_info.error(f"{response.status_code}: {rjson['message']}")
         else:
-            print(f"An error occured! Request did not return status code 200.\nStatus code: {response.status_code}\nResponse text: {response.text}")
+            print(f"Status code: {response.status_code}\nResponse text: {response.text}")
             channel_info.error(f"Status code {response.status_code} returned.")
 
 def channel_sendfunc(args: argparse.Namespace) -> None:
@@ -847,7 +864,7 @@ def channel_sendfunc(args: argparse.Namespace) -> None:
 
     if args.verbose:
         log(f"Sending POST request to API\nAPI URL: {api_url}\nJSON Data: {json.dumps(data, indent=2)}")
-    info("Sending message")
+    info("Sending message...")
     response = requests.post(
         api_url/"channel"/id/"send-message",
         json = data,
@@ -884,11 +901,12 @@ def channel_sendfunc(args: argparse.Namespace) -> None:
         else:
             channel_send.error(f"Invalid response text received from {response.url}.")
     else:
+        winfo("An error occured! Request did not return status code 200.")
         if has_message:
-            print(f"An error occured! Request did not return status code 200.\nStatus code: {response.status_code}")
+            print(f"Status code: {response.status_code}")
             channel_send.error(f"{response.status_code}: {rjson['message']}")
         else:
-            print(f"An error occured! Request did not return status code 200.\nStatus code: {response.status_code}\nResponse text: {response.text}")
+            print(f"Status code: {response.status_code}\nResponse text: {response.text}")
             channel_send.error(f"Status code {response.status_code} returned.")
 
 def configfunc(args: argparse.Namespace) -> None:
@@ -899,12 +917,13 @@ def configfunc(args: argparse.Namespace) -> None:
         args (argparse.Namespace)
     """
     if args.reset:
+        info("Resetting config file...")
         config.reset(verbose=args.verbose)
     elif args.value == None:
         print(config.get(args.variable, verbose=args.verbose))
     else:
         config.set(args.variable, args.value, verbose=args.verbose)
-        print(f"Successfully changed value of '{args.variable}' in the config file to '{args.value}'.")
+        info(f"Successfully changed value of '{args.variable}' in the config file to '{args.value}'.")
 
 # main command
 parser.add_argument(
