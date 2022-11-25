@@ -27,10 +27,12 @@ $ pip install ahuri-cli
 ### On Windows
 Open a terminal and type:
 ```py
-$ pip install ahuri-cli[windows]
+> pip install ahuri-cli[windows]
 ```
 
 ## Usage
 You can use the command `ahuri` to use the app.
 <br>
 Use `ahuri -h` to view the main help page.
+
+**NOTE:** If the command `ahuri` is not found, it's probably not on path. If python or python3 is on path, you can use the command `python -m ahuri` or `python3 -m ahuri` to use the app.
